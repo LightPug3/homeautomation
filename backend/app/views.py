@@ -27,18 +27,101 @@ from math import floor
 
 
 # 1. CREATE ROUTE FOR '/api/set/combination'
-    
+@app.route('/api/set/combination/', methods=['POST'])
+def set_combination():
+    if request.method == 'POST':
+        try:
+            # Extract passcode from form data
+            form = request.form
+            passcode = escape(form.get("passcode"))
+            print(passcode)
+            passcodeInt = int(passcode)
+            passcode = str(passcode)
+            # Check if passcode is a 4-digit integer
+            if  len(passcode) == 4 and type(passcodeInt) == int :
+                # Update passcode in the database
+                success = mongo.update_passcode(passcode)   
+            if success:
+                return jsonify({"status": "complete", "data": "complete"})
+            else:
+                return jsonify({"status": "failed", "data": "failed"})
+        except Exception as e:
+            print(f"set_combination error: f{str(e)}")
+
 # 2. CREATE ROUTE FOR '/api/check/combination'
+@app.route('/api/check/combination/', methods=['POST'])
+def check_combination():
+    print("here")
+    if request.method == 'POST':
+        try:
+            form =  request.form
+ 
+            passcode = escape(form.get("passcode"))
+            print(passcode)
+            # Call the function to check the passcode
+            print(passcode)
+            result = mongo.check_passcode(passcode)
+            if result:
+                return jsonify({"status": "complete", "data": "complete"})
+            else:
+                return jsonify({"status": "failed", "data": "failed"})
+        except Exception as e:
+            print(f"check_combination error: f{str(e)}")
 
 # 3. CREATE ROUTE FOR '/api/update'
-   
+@app.route('/api/update', methods=['POST'])
+def update_data():
+    print("here")
+    if request.method == 'POST'and request.is_json:
+        try:
+            # Adding timestamp to the received data
+            #data['timestamp'] = int(time.time())
+            # Publish the modified data to a topic subscribed to by the frontend
+            json_data = request.get_json()
+            #print(json_data)
+            # Add timestamp to the received data
+            now = datetime.now()
+            timestamp = int(now.timestamp())
+            json_data['timestamp'] = timestamp
+            Mqtt.publish('620156694_sub', json.dumps(json_data))
+            Mqtt.publish('620156694_pub', json.dumps(json_data))
+            Mqtt.publish('620156694', json.dumps(json_data))
+
+            # Insert the modified object into the 'radar' collection of the database
+            result = mongo.insert_data(json_data)
+            if result:
+                return jsonify({"status": "complete", "data": "complete"})
+            else:
+                return jsonify({"status": "failed", "data": "failed"})
+        except Exception as e:
+           print(f"update_data error: f{str(e)}")
+
 # 4. CREATE ROUTE FOR '/api/reserve/<start>/<end>'
+@app.route('/api/reserve/<start>/<end>', methods=['GET'])
+def get_reservation(start, end):
+     start = int(start)
+     end = int(end)
+    # Call function to get reserved objects
+     if request.method == 'GET':
+        try:
+            data = mongo.get_reserved_objects(start, end)
+            if data:
+                return jsonify({"status": "found", "data": data})
+        except Exception as e:
+           print(f"get_reservation error: f{str(e)}")
+        return jsonify({"status": "failed", "data": 0})
 
 # 5. CREATE ROUTE FOR '/api/avg/<start>/<end>'
-
-
-   
-
+@app.route('/api/avg/<start>/<end>', methods=['GET'])
+def get_average(start, end):
+    # Call function to calculate average
+     if request.method == 'GET':
+        try:
+            average = mongo.get_average(start, end)
+            if average:
+                return jsonify({"status": "found", "data": average})
+        except Exception as e:
+            return jsonify({"status": "failed", "data": 0})
 
 
 
