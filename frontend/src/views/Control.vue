@@ -23,8 +23,6 @@ import { useAppStore } from "@/store/appStore";
 import { useMqttStore } from "@/store/mqttStore"; // Import Mqtt Store
 import { storeToRefs } from "pinia";
 
-// importing fluid-meter.js
-src="./homeautomation/javascript-fluid-meter-master/js/js-fluid-meter.js"
 
 // VARIABLES
 const Mqtt        = useMqttStore();
@@ -53,6 +51,7 @@ onBeforeUnmount(() => {
 const submit = async () => {
   const random = await AppStore.setPasscode(passcode.value);
 };
+
 </script>
 
 <style scoped>
