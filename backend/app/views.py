@@ -72,7 +72,7 @@ def check_combination():
 @app.route('/api/update', methods=['POST'])
 def update_data():
     print("here")
-    if request.method == 'POST'and request.is_json:
+    if request.method == 'POST':
         try:
             # Adding timestamp to the received data
             #data['timestamp'] = int(time.time())
@@ -83,9 +83,13 @@ def update_data():
             now = datetime.now()
             timestamp = int(now.timestamp())
             json_data['timestamp'] = timestamp
-            Mqtt.publish('620156694_sub', json.dumps(json_data))
-            Mqtt.publish('620156694_pub', json.dumps(json_data))
-            Mqtt.publish('620156694', json.dumps(json_data))
+            Mqtt.publish('620156694_sub', dumps(json_data))
+            Mqtt.publish('620156694_pub', dumps(json_data))
+            Mqtt.publish('620156694', dumps(json_data))
+
+
+            print(type(json_data))
+
 
             # Insert the modified object into the 'radar' collection of the database
             result = mongo.insert_data(json_data)

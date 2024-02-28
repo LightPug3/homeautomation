@@ -21,17 +21,17 @@
 
 
 //**********ENTER IP ADDRESS OF SERVER******************//
-#define HOST_IP     "192.168.86.21"       // REPLACE WITH IP ADDRESS OF SERVER ( IP ADDRESS OF COMPUTER THE BACKEND IS RUNNING ON) 
+#define HOST_IP     "172.16.192.132"       // REPLACE WITH IP ADDRESS OF SERVER ( IP ADDRESS OF COMPUTER THE BACKEND IS RUNNING ON) 
 #define HOST_PORT   "8080"            // REPLACE WITH SERVER PORT (BACKEND FLASK API PORT)
 #define route       "api/update"      // LEAVE UNCHANGED 
 #define idNumber    "620156694"       // REPLACE WITH YOUR ID NUMBER 
 
 // WIFI CREDENTIALS
-#define SSID        "WPS"             // "REPLACE WITH YOUR WIFI's SSID"
-#define password    "W0LM3R$WP$"      // "REPLACE WITH YOUR WiFi's PASSWORD"
+// #define SSID        "WPS"             // "REPLACE WITH YOUR WIFI's SSID"
+// #define password    "W0LM3R$WP$"      // "REPLACE WITH YOUR WiFi's PASSWORD"
 
-// #define SSID        "MonaConnect"     // "REPLACE WITH YOUR WIFI's SSID"
-// #define password    ""                // "REPLACE WITH YOUR WiFi's PASSWORD"
+#define SSID        "MonaConnect"     // "REPLACE WITH YOUR WIFI's SSID"
+#define password    ""                // "REPLACE WITH YOUR WiFi's PASSWORD"
 
 #define stay        100
 #define ARDUINOJSON_USE_DOUBLE 1
@@ -94,16 +94,16 @@ void loop(){
   water_reserve = calc_volume(water_height);
 
   // conv. water_reserves to percent:
-  reserve_percentage = toPercentage(water_reserve);
+  reserve_percentage = toPercentage(water_height);
 
   // Create JSon object
   StaticJsonDocument<1000> doc;
-  char message[1100] = { 0 };
+  char message[280] = { 0 };
 
   // send updates with schema ‘{"id": "student_id", "type": "ultrasonic", "radar": 0, "waterheight": 0, "reserve": 0, "percentage": 0}’
   // Add key:value pairs to JSon object based on above schema
   doc["id"]           = "620156694";
-  doc["type"]         = "ultasonic";
+  doc["type"]         = "ultrasonic";
   doc["radar"]        = radar_val;
   doc["waterheight"]  = water_height;
   doc["reserve"]      = water_reserve;
@@ -172,7 +172,8 @@ double calc_water_height(double radarVal){
 
 // water reserve function:
 double calc_volume(double waterHeight){
-  return (3.14159265 * pow(30.75,2) * waterHeight)/231.0;
+  // return (3.14159265 * pow(30.75,2) * waterHeight)/231.0;
+  return (3.1415 * 30.75 * 30.75  * water_height) /231.0;
 }
 
 // toPercentage:

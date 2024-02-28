@@ -53,14 +53,26 @@ class DB:
     
     # 1. CREATE FUNCTION TO INSERT DATA IN TO THE RADAR COLLECTION
     def insert_data(self,data):
+        # try:
+        #     remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
+        #     remotedb.ELET2415.radar.insert_one(data)
+        #     # return 1
+        #     return data
+        # except Exception as e:
+        #     msg = str(e)
+        #     print("insert_data error ",msg)      
+        # return 0
+        '''ADD A NEW STORAGE LOCATION TO COLLECTION'''
         try:
             remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
-            remotedb.ELET2415.radar.insert_one(data)
-            return 1
+            result      = remotedb.ELET2415.radar.insert_one(data)
         except Exception as e:
             msg = str(e)
-            print("insert_data error ",msg)      
-        return 0  
+            if "duplicate" not in msg:
+                print("addUpdate error ",msg)
+            return False
+        else:                  
+            return True
     
     # 2. CREATE FUNCTION TO RETRIEVE ALL DOCUMENTS FROM RADAR COLLECT BETWEEN SPECIFIED DATE RANGE. MUST RETURN A LIST OF DOCUMENTS
     def get_reserved_objects(self,start, end):

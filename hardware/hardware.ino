@@ -50,7 +50,7 @@ uint8_t digit_4 = 0;
 #define BUTTON1      32
 #define BUTTON2      33
 #define BUTTON3      25
-#define analogPin 36
+#define analogPin    36
 
 // TFT variables and pin mappings:
 #define TFT_DC    17
@@ -76,10 +76,10 @@ static const char* mqtt_server   = "www.yanacreations.com";         // Broker IP
 static uint16_t mqtt_port        = 1883;
 
 // WIFI CREDENTIALS
-const char* ssid          = "WPS";           // Add your Wi-Fi ssid
-const char* password      = "W0LM3R$WP$";    // Add your Wi-Fi password 
-// const char* ssid       = "MonaConnect";
-// const char* password   = "";
+// const char* ssid          = "WPS";           // Add your Wi-Fi ssid
+// const char* password      = "W0LM3R$WP$";    // Add your Wi-Fi password 
+const char* ssid       = "MonaConnect";
+const char* password   = "";
 
 
 // TASK HANDLES 
@@ -141,9 +141,9 @@ void setup() {
   tft.fillScreen(ILI9341_DARKGREY);
   tft.setTextColor(ILI9341_BLACK);
   tft.setCursor(40, 180);
-  tft.print("NATHAN");
+  tft.print("Light");
   tft.setTextColor(ILI9341_BLUE);
-  tft.print("GORDON");
+  tft.print("Pug");
   tft.setTextColor(ILI9341_BLUE);
   tft.setTextSize(1);
   tft.fillRoundRect(185, 260, 50, 50, 5, ILI9341_BLACK);
@@ -173,36 +173,38 @@ void loop() {
   int analog_value = analogRead(analogPin);
   
   // 2. Assign this mapped value to the currently selected digit, created in task B, based on the value of the currentDigit variable
-  analog_value = map(analog_value, 0, 4095, 0, 80);
+  int digit_value = map(analog_value, 0, 4095, 0, 9);
 
-  analog_value %= 10;
+  // analog_value %= 10;
   
   if (currentDigit == 1) {
-    digit1(analog_value);
-    digit_1 = analog_value;
+    digit1(digit_value);
+    digit_1 = digit_value;
   }
 
   if (currentDigit == 2) {
-    digit2(analog_value);
-    digit_2 = analog_value;
+    digit2(digit_value);
+    digit_2 = digit_value;
   }
 
   if (currentDigit == 3) {
-    digit3(analog_value);
-    digit_3 = analog_value;
+    // digit3(analog_value);
+    digit3(digit_value);
+    digit_3 = digit_value;
   }
 
   if (currentDigit == 4) {
-    digit4(analog_value);
-    digit_4 = analog_value;
+    // digit4(analog_value);
+    digit4(digit_value);
+    digit_4 = digit_value;
   }
 
-  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  vTaskDelay(250 / portTICK_PERIOD_MS);
 }
 
 
 
-  
+
 //####################################################################
 //#                          UTIL FUNCTIONS                          #       
 //####################################################################
@@ -215,7 +217,7 @@ void vButtonCheck( void * pvParameters )  {
 
     // 1. Implement button1  functionality
     if (digitalRead(BUTTON1) == LOW) {
-      delay(100);
+      delay(50);
       currentDigit++;
       if (currentDigit > 4) {
         currentDigit = 1;
@@ -224,13 +226,13 @@ void vButtonCheck( void * pvParameters )  {
 
     // 2. Implement button2  functionality
     if (digitalRead(BUTTON2) == LOW) {
-      delay(150);
+      delay(50);
       checkPasscode();
     }
     
     // 3. Implement button3  functionality
     if (digitalRead(BUTTON3) == LOW) {
-      delay(100);
+      delay(50);
       lockState = false;
       showLockState();
     }
@@ -369,7 +371,7 @@ void checkPasscode(void){
   if(WiFi.status()== WL_CONNECTED){
     
     // 1. REPLACE LOCALHOST IN THE STRING BELOW WITH THE IP ADDRESS OF THE COMPUTER THAT YOUR BACKEND IS RUNNING ON
-    http.begin(client, "http://192.168.86.21:8080/api/check/combination"); // Your Domain name with URL path or IP address with path 
+    http.begin(client, "http://172.16.192.132:8080/api/check/combination"); // Your Domain name with URL path or IP address with path 
  
       
     http.addHeader("Content-Type", "application/x-www-form-urlencoded"); // Specify content-type header      
